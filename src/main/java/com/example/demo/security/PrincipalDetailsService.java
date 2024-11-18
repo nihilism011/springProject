@@ -2,18 +2,17 @@ package com.example.demo.security;
 
 import com.example.demo.domain.member.entities.Member;
 import com.example.demo.domain.member.repository.MemberRepository;
-import com.example.demo.security.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class PrincipalDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
-    public CustomUserDetailsService(MemberRepository memberRepository) {
+    public PrincipalDetailsService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -25,11 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }
 
-        // 조회된 사용자 정보를 CustomUserDetails로 변환
-        return new CustomUserDetails(
-                member.getUserName(),
-                member.getPassword(),
-                member.getRole().toString() // 사용자의 권한 정보
-        );
+        // 조회된 사용자 정보를 PrincipalDetails로 변환
+        return new PrincipalDetails(member);
     }
 }
