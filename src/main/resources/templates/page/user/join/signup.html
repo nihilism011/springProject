@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html
+  lang="ko"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{layouts/layout1}"
+>
+  <div layout:fragment="content">
+    <div class="container">
+      <h1>Sign up</h1>
+      <div class="content">
+        <form id="signup-form" method="post" action="join" class="form">
+          <input
+            onchange="fnIdCheck()"
+            type="text"
+            id="userName"
+            name="userName"
+            placeholder="아이디"
+          />
+          <div id="idChecker"></div>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="비밀번호"
+          />
+          <input
+            type="password"
+            id="passwordCheck"
+            name="passwordCheck"
+            placeholder="비밀번호 확인"
+          />
+          <input type="text" id="name" name="name" placeholder="이름" />
+          <input
+            type="text"
+            id="birth"
+            name="birth"
+            placeholder="생년월일 8자리"
+          />
+          <input type="text" id="tel" name="tel" placeholder="휴대전화번호" />
+          <input type="text" id="email" name="email" placeholder="이메일" />
+          <button type="button" class="btn btn-primary" id="fnSubmit">
+            회원가입
+          </button>
+        </form>
+      </div>
+    </div>
+    <script>
+      let isIdCheck = false;
+      function fnIdCheck() {
+        const userId = document.querySelector("#userName").value;
+        const url = "isMember/" + userId;
+        axios.get(url).then(({ data }) => {
+          if (data) {
+            idChecker.innerHTML = "사용 가능한 아이디 입니다.";
+            idChecker.style.color = "blue";
+            isIdCheck = true;
+          } else {
+            idChecker.innerHTML = "이미 사용중인 아이디 입니다.";
+            idChecker.style.color = "red";
+            isIdCheck = false;
+          }
+        });
+      }
+      document
+        .getElementById("fnSubmit")
+        .addEventListener("click", function () {
+          const userId = document.getElementById("userName").value;
+          const password = document.getElementById("password").value;
+          const passwordCheck = document.getElementById("passwordCheck").value;
+          const userName = document.getElementById("name").value;
+          const birth = document.getElementById("birth").value;
+          const tel = document.getElementById("tel").value;
+          const email = document.getElementById("email").value;
+          if (!isIdCheck) {
+            alert("아이디를 확인해주세요.");
+            return;
+          }
+          if (!userId) {
+            alert("아이디를 입력하세요.");
+            return;
+          }
+
+          if (!password) {
+            alert("비밀번호를 입력하세요.");
+            return;
+          }
+
+          if (password !== passwordCheck) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+          }
+
+          if (!userName) {
+            alert("이름을 입력하세요.");
+            return;
+          }
+
+          // if (!/^\d{8}$/.test(birth)) {
+          if (!birth) {
+            alert("생년월일은 8자리 숫자로 입력하세요.");
+            return;
+          }
+
+          if (!/^\d+$/.test(tel)) {
+            alert("휴대전화번호는 숫자만 입력 가능합니다.");
+            return;
+          }
+          if (!email) {
+            alert("이메일 형식에 맞게 작성해 주세요.");
+          }
+
+          document.getElementById("signup-form").submit();
+        });
+    </script>
+  </div>
+</html>
